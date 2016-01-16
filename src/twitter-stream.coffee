@@ -8,9 +8,9 @@
 #   HUBOT_TWITTER_ACCESS_TOKEN_SECRET
 #
 # Commands:
-#   hubot twitter subscribe <screen_name> - Subscribes the current room to tweets from @screen_name
-#   hubot twitter unsubscribe <screen_name> - Unsubscribes the current room to tweets from @screen_name
-#   hubot twitter subscriptions - Lists the screen names the current room is subscribed to
+#   hubot tweets subscribe <screen_name> - Subscribes the current room to tweets from @screen_name
+#   hubot tweets unsubscribe <screen_name> - Unsubscribes the current room to tweets from @screen_name
+#   hubot tweets subscriptions - Lists the screen names the current room is subscribed to
 #
 # Author:
 #   Andy Lindeman
@@ -102,7 +102,7 @@ module.exports = (robot) ->
       access_token_secret: access_token_secret
     subscriptionManager = new TwitterStreamSubscriptionManager(client, robot.brain, sendTweetToRoom)
 
-    robot.respond /twitter subscribe @?(\S+)$/i, (msg) ->
+    robot.respond /tweets subscribe @?(\S+)$/i, (msg) ->
       screen_name = msg.match[1]
       subscriptionManager.ensureSubscribedTo msg.message.room, screen_name, (err) ->
         if err?
@@ -110,7 +110,7 @@ module.exports = (robot) ->
         else
           msg.reply "Great! Anytime @#{screen_name} tweets, I'll post it here."
 
-    robot.respond /twitter unsubscribe @?(\S+)$/i, (msg) ->
+    robot.respond /tweets unsubscribe @?(\S+)$/i, (msg) ->
       screen_name = msg.match[1]
       subscriptionManager.ensureUnsubscribedFrom msg.message.room, screen_name, (err) ->
         if err?
@@ -118,7 +118,7 @@ module.exports = (robot) ->
         else
           msg.reply "Roger that! I won't post tweets from @#{screen_name} anymore."
 
-    robot.respond /twitter subscriptions$/i, (msg) ->
+    robot.respond /tweets subscriptions?$/i, (msg) ->
       subscriptions = Object.keys(subscriptionManager.subscriptionsForRoom(msg.message.room))
       msg.reply "This room is subscribed to: #{subscriptions.join(', ')}"
   else
