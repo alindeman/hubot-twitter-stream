@@ -104,7 +104,7 @@ module.exports = (robot) ->
 
     robot.respond /tweets subscribe @?(\S+)$/i, (msg) ->
       screen_name = msg.match[1]
-      subscriptionManager.ensureSubscribedTo msg.message.room, screen_name, (err) ->
+      subscriptionManager.ensureSubscribedTo msg.message.user.reply_to, screen_name, (err) ->
         if err?
           msg.reply "Something went wrong: #{err}"
         else
@@ -112,14 +112,14 @@ module.exports = (robot) ->
 
     robot.respond /tweets unsubscribe @?(\S+)$/i, (msg) ->
       screen_name = msg.match[1]
-      subscriptionManager.ensureUnsubscribedFrom msg.message.room, screen_name, (err) ->
+      subscriptionManager.ensureUnsubscribedFrom msg.message.user.reply_to, screen_name, (err) ->
         if err?
           msg.reply "Something went wrong: #{err}"
         else
           msg.reply "Roger that! I won't post tweets from @#{screen_name} anymore."
 
     robot.respond /tweets subscriptions?$/i, (msg) ->
-      subscriptions = Object.keys(subscriptionManager.subscriptionsForRoom(msg.message.room))
+      subscriptions = Object.keys(subscriptionManager.subscriptionsForRoom(msg.message.user.reply_to))
       msg.reply "This room is subscribed to: #{subscriptions.join(', ')}"
   else
     console.log "hubot-twitter-stream configuration variables missing"
