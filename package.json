@@ -1,7 +1,7 @@
 {
   "name": "hubot-twitter-stream",
   "description": "Hubot plugin that subscribes a room to a Twitter stream",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Andy Lindeman <andy@lindeman.io>",
   "license": "MIT",
 
