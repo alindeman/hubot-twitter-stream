@@ -44,7 +44,7 @@ class TwitterStreamSubscriptionManager
         else
           stream = roomStreams[screen_name] = @client.stream('statuses/filter', follow: user_id)
           stream.on 'tweet', (tweet) =>
-            @callback(room, tweet) if @callback
+            @callback(room, tweet) if @callback and tweet?.user?.id_str == user_id
           stream.on 'error', (error) ->
             console.log error
           callback(null) if callback
