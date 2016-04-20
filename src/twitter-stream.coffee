@@ -124,6 +124,9 @@ module.exports = (robot) ->
       subscriptions = Object.keys(subscriptionManager.subscriptionsForRoom(msg.message.user.room))
       msg.reply "This room is subscribed to: #{subscriptions.join(', ')}"
 
+    robot.respond /tws brain/i, (msg) ->
+      msg.reply JSON.stringify(robot.brain.data._private["twitter-stream-room-follow-subscriptions"])
+
 
   else
     console.log "hubot-twitter-stream configuration variables missing"
