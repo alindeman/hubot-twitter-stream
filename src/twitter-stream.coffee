@@ -92,7 +92,7 @@ module.exports = (robot) ->
   constructStatusUrl = (tweet) ->
     "https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
   sendTweetToRoom = (room, tweet) ->
-    robot.send room, constructStatusUrl(tweet)
+    robot.send room: room, constructStatusUrl(tweet)
 
   if consumer_key and consumer_secret and access_token and access_token_secret
     client = new Twit
