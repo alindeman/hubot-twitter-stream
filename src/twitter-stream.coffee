@@ -17,7 +17,6 @@
 #   Laura Lindeman
 #   Isaac Roca
 
-
 Twit = require 'twit'
 
 consumer_key = process.env.HUBOT_TWITTER_CONSUMER_KEY
@@ -91,8 +90,10 @@ class TwitterStreamSubscriptionManager
         @ensureSubscribedTo room, subscription
 
 module.exports = (robot) ->
+
   constructStatusUrl = (tweet) ->
-    "https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
+    "#{tweet.text} (@#{tweet.user.screen_name})\nhttps://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
+
   sendTweetToRoom = (room, tweet) ->
     robot.send room: room, constructStatusUrl(tweet)
 
@@ -126,7 +127,6 @@ module.exports = (robot) ->
 
     robot.respond /tws brain/i, (msg) ->
       msg.reply JSON.stringify(robot.brain.data._private["twitter-stream-room-follow-subscriptions"])
-
 
   else
     console.log "hubot-twitter-stream configuration variables missing"
