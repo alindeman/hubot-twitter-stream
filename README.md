@@ -1,6 +1,8 @@
-# hubot-twitter-stream
+# hubot-twitter-subscriptions
 
-Hubot plugin that subscribes a room to a Twitter stream
+Hubot plugin that subscribes a room to a/some Twitter stream/s.
+
+Hubot's brain needs a redis server to memorize the subscriptions, please make sure you have it running. 
 
 See [`src/twitter-stream.coffee`](src/twitter-stream.coffee) for full documentation.
 
@@ -8,19 +10,19 @@ See [`src/twitter-stream.coffee`](src/twitter-stream.coffee) for full documentat
 
 In hubot project repo, run:
 
-`npm install hubot-twitter-stream --save`
+`npm install hubot-twitter-subscriptions --save`
 
-Then add **hubot-twitter-stream** to your `external-scripts.json`:
+Then add **hubot-twitter-subscriptions** to your `external-scripts.json`:
 
 ```json
 [
-  "hubot-twitter-stream"
+  "hubot-twitter-subscriptions"
 ]
 ```
 
 ## Sample Interaction
 
 ```
-user1>> hubot hello
-hubot>> hello!
+user1>> hubot tws add foxnews
+hubot>> @user1: Great! Anytime @foxnews tweets, I'll post it here.
 ```
