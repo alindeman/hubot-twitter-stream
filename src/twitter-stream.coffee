@@ -8,13 +8,14 @@
 #   HUBOT_TWITTER_ACCESS_TOKEN_SECRET
 #
 # Commands:
-#   hubot tweets subscribe <screen_name> - Subscribes the current room to tweets from @screen_name
-#   hubot tweets unsubscribe <screen_name> - Unsubscribes the current room to tweets from @screen_name
-#   hubot tweets subscriptions - Lists the screen names the current room is subscribed to
+#   hubot tws add <screen_name> - Subscribes the current room to tweets from @screen_name
+#   hubot tws rm <screen_name> - Unsubscribes the current room to tweets from @screen_name
+#   hubot tws list - Lists the screen names the current room is subscribed to
 #
 # Author:
 #   Andy Lindeman
 #   Laura Lindeman
+
 
 Twit = require 'twit'
 
@@ -102,7 +103,7 @@ module.exports = (robot) ->
       access_token_secret: access_token_secret
     subscriptionManager = new TwitterStreamSubscriptionManager(client, robot.brain, sendTweetToRoom)
 
-    robot.respond /tweets subscribe @?(\S+)$/i, (msg) ->
+    robot.respond /tws add @?(\S+)$/i, (msg) ->
       screen_name = msg.match[1]
       subscriptionManager.ensureSubscribedTo msg.message.user.room, screen_name, (err) ->
         if err?
@@ -110,7 +111,7 @@ module.exports = (robot) ->
         else
           msg.reply "Great! Anytime @#{screen_name} tweets, I'll post it here."
 
-    robot.respond /tweets unsubscribe @?(\S+)$/i, (msg) ->
+    robot.respond /tws rm @?(\S+)$/i, (msg) ->
       screen_name = msg.match[1]
       subscriptionManager.ensureUnsubscribedFrom msg.message.user.room, screen_name, (err) ->
         if err?
@@ -118,9 +119,10 @@ module.exports = (robot) ->
         else
           msg.reply "Roger that! I won't post tweets from @#{screen_name} anymore."
 
-    robot.respond /tweets subscriptions?$/i, (msg) ->
+    robot.respond /tws list/i, (msg) ->
       subscriptions = Object.keys(subscriptionManager.subscriptionsForRoom(msg.message.user.room))
       msg.reply "This room is subscribed to: #{subscriptions.join(', ')}"
+
 
   else
     console.log "hubot-twitter-stream configuration variables missing"
