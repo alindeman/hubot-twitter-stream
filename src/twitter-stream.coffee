@@ -15,6 +15,7 @@
 # Author:
 #   Andy Lindeman
 #   Laura Lindeman
+#   Isaac Roca
 
 
 Twit = require 'twit'
