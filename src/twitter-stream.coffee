@@ -59,13 +59,13 @@ module.exports = (robot) ->
         callback(err)
   
   robot.error (err, res) ->
-    logError err_msg = "Error: " + err
-    res.reply err_msg if res?
+    logError err
+    res.reply "Error: " + err if res?
 
   robot.brain.on 'loaded', ->
     tws_brain = robot.brain.get BRAIN_KEY
     tws_brain = robot.brain.set BRAIN_KEY, {} unless tws_brain?
-    unless Object.keys(tws_brain).length > 0
+    if !Object.keys(tws_brain).length
       logInfo "There are no subscriptions to load from radis brain."
       return
     logInfo "Loading subscriptions from radis brain: " + JSON.stringify(tws_brain, null, '\t')
@@ -89,6 +89,7 @@ module.exports = (robot) ->
       tws_brain[user.user_id].name = user.screen_name
       tws_brain[user.user_id].rooms.push msg.message.user.room
       msg.reply "Great! Anytime @#{user.screen_name} tweets, I'll post it here."
+      logInfo "Adding subscription. Room: #{msg.message.user.room} Username: @#{user.screen_name}"
       resetStream (err) ->
         msg.reply "Something went wrong: #{err}" if err?
 
@@ -103,6 +104,7 @@ module.exports = (robot) ->
       tws_brain[user.user_id].rooms = tws_brain[user.user_id].rooms.filter (e) -> e != msg.message.user.room
       delete tws_brain[user.user_id] if tws_brain[user.user_id].rooms.length == 0
       msg.reply "Roger that! I won't post tweets from @#{user.screen_name} anymore."
+      logInfo "Removing subscription. Room: #{msg.message.user.room} Username: @#{user.screen_name}"
       resetStream (err) ->
         msg.reply "Something went wrong: #{err}" if err?
 
