@@ -47,14 +47,16 @@ module.exports = (robot) ->
   
   resetStream = (callback) ->
     tw_stream.stop() if tw_stream?
-    tw_stream = tw_client.stream 'statuses/filter', follow: Object.keys(tws_brain).join(',')
-    tw_stream.on 'tweet', (tweet) ->
-      return unless tweet?.user?.id_str?
-      if tws_brain[tweet.user.id_str]?
-        logInfo '@' + tws_brain[tweet.user.id_str].name + ' tweet emitted: ' + tweet.text
-        robot.emit "new_tweet", tws_brain[tweet.user.id_str].rooms, tweet
-    tw_stream.on 'error', (err) ->
-      callback(err)
+    user_ids = Object.keys(tws_brain)
+    if user_ids.length > 0
+      tw_stream = tw_client.stream 'statuses/filter', follow: user_ids.join(',')
+      tw_stream.on 'tweet', (tweet) ->
+        return unless tweet?.user?.id_str?
+        if tws_brain[tweet.user.id_str]?
+          logInfo '@' + tws_brain[tweet.user.id_str].name + ' tweet emitted: ' + tweet.text
+          robot.emit "new_tweet", tws_brain[tweet.user.id_str].rooms, tweet
+      tw_stream.on 'error', (err) ->
+        callback(err)
   
   robot.error (err, res) ->
     logError err_msg = "Error: " + err
@@ -63,6 +65,9 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', ->
     tws_brain = robot.brain.get BRAIN_KEY
     tws_brain = robot.brain.set BRAIN_KEY, {} unless tws_brain?
+    unless Object.keys(tws_brain).length > 0
+      logInfo "There are no subscriptions to load from radis brain."
+      return
     logInfo "Loading subscriptions from radis brain: " + JSON.stringify(tws_brain, null, '\t')
     resetStream (err) ->
       logError "Something went wrong connecting to Twitter: #{err}. Exiting." if err?
