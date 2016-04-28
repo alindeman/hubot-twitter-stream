@@ -60,11 +60,15 @@ module.exports = (robot) ->
           logInfo '@' + tws_brain[tweet.user.id_str].name + ' tweet emitted: ' + tweet.text
           robot.emit "new_tweet", tws_brain[tweet.user.id_str].rooms, tweet
       tw_stream.on 'error', (err) ->
-        logDevroom 'Error: ' + err.message
+        logDevroom '*Error*: ' + err.message
         callback(err)
-      for ev in ['limit','disconnect','connect','connected','reconnect','warning']
-        tw_stream.on ev, (o) ->
-          logDevRoom ev + ': ' + JSON.stringify(o)
+      tw_stream.on 'limit', (o) -> logDevRoom '*LIMIT*: ' + JSON.stringify(o)
+      tw_stream.on 'disconnect', (o) -> logDevRoom '*DISCONNECT*: ' + JSON.stringify(o)
+      tw_stream.on 'connect', (o) -> logDevRoom '*CONNECT*: ' + JSON.stringify(o)
+      tw_stream.on 'connected', (o) -> logDevRoom '*CONNECTED*: ' + JSON.stringify(o)
+      tw_stream.on 'reconnect', (o) -> logDevRoom '*RECONNECT*: ' + JSON.stringify(o)
+      tw_stream.on 'warning', (o) -> logDevRoom '*WARNING*: ' + JSON.stringify(o)
+      tw_stream.on 'unknown_user_event', (o) -> logDevRoom '*UNKNOWN_USER_EVENT*: ' + JSON.stringify(o)
 
   robot.error (err, res) ->
     logError err
