@@ -74,7 +74,7 @@ module.exports = (robot) ->
 
   robot.on "new_tweet", (rooms, tweet) ->
     for room in rooms
-      robot.send room: room, "#{tweet.text} (@#{tweet.user.screen_name})\n
+      robot.send room: room, "*#{tweet.text} *(@#{tweet.user.screen_name})\n
         https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id_str}"
 
   robot.respond /tws add @?(\S+)$/i, (msg) ->
