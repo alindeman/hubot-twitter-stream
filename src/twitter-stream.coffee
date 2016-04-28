@@ -6,6 +6,7 @@
 #   HUBOT_TWITTER_CONSUMER_SECRET
 #   HUBOT_TWITTER_ACCESS_TOKEN
 #   HUBOT_TWITTER_ACCESS_TOKEN_SECRET
+#   HUBOT_TWS_DEBUG_ROOM (optional)
 #
 # Commands:
 #   hubot tws add <screen_name> - Subscribes the current room to tweets from @screen_name
@@ -21,6 +22,8 @@ CONSUMER_KEY = process.env.HUBOT_TWITTER_CONSUMER_KEY
 CONSUMER_SECRET = process.env.HUBOT_TWITTER_CONSUMER_SECRET
 ACCESS_TOKEN = process.env.HUBOT_TWITTER_ACCESS_TOKEN
 ACCESS_TOKEN_SECRET = process.env.HUBOT_TWITTER_ACCESS_TOKEN_SECRET
+DEBUG_ROOM = process.env.HUBOT_TWS_DEBUG_ROOM
+
 BRAIN_KEY = "twitter-room-subscriptions"
 LOG_PREFIX = "twitter-subscriptions: "
 
@@ -28,6 +31,7 @@ module.exports = (robot) ->
 
   logInfo = (msg) -> robot.logger.info LOG_PREFIX + msg
   logError = (msg) -> robot.logger.error LOG_PREFIX + msg
+  logDevRoom = (msg) -> robot.send room: DEBUG_ROOM, msg if DEBUG_ROOM?
 
   unless CONSUMER_KEY? and CONSUMER_SECRET? and ACCESS_TOKEN? and ACCESS_TOKEN_SECRET?
     logError "Missing Twitter configuration variables. Not loading."
@@ -56,8 +60,12 @@ module.exports = (robot) ->
           logInfo '@' + tws_brain[tweet.user.id_str].name + ' tweet emitted: ' + tweet.text
           robot.emit "new_tweet", tws_brain[tweet.user.id_str].rooms, tweet
       tw_stream.on 'error', (err) ->
+        logDevroom 'Error: ' + err.message
         callback(err)
-  
+      for ev in ['limit','disconnect','connect','connected','reconnect','warning']
+        tw_stream.on ev, (o) ->
+          logDevRoom ev + ': ' + JSON.stringify(o)
+
   robot.error (err, res) ->
     logError err
     res.reply "Error: " + err if res?
